@@ -3,6 +3,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --main-bg: #fdfbf7;
+  --card-main: #b8cddb;
+  --primary-accent: #c1dbea;
+  --secondary-accent: #f5e8b8;
+  --secondary-brand: #f0d781;
+  --border-subtle: #d6c9c7;
+  --muted-text: #52403d;
+  --primary-text: #221716;
 }
 
 @theme inline {
