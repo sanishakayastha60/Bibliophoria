@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Special_Elite } from "next/font/google";
 import "./globals.css";
-
+import Frame from "@/components/Frame";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -9,6 +9,12 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const specialElite = Special_Elite({
+  variable: "--font-special-elite",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -21,10 +27,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${specialElite.variable} h-full antialiased`}
     >
-      <body className="min-h-full min-h-screen flex flex-col bg-amber-300">
-        {children}
+      <body className="min-h-screen flex flex-col">
+        <Frame>{children}</Frame>
       </body>
     </html>
   );
