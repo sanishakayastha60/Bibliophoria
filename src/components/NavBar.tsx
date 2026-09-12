@@ -6,7 +6,7 @@ import { Plus, Menu, X } from "lucide-react";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <nav className="relative m-4 rounded-2xl bg-white p-4 shadow-sm">
+    <nav className="relative rounded-2xl bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <div
           id="left"
