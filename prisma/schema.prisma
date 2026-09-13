@@ -11,3 +11,46 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Reread {
+  Yes
+  No
+  Maybe
+}
+
+model Book{
+  book_id String @id @default(uuid())
+  book_title String
+  author String?
+  description String?
+  review String?
+  reread Reread @default(No)
+  createdAt DateTime @default(now())
+
+  images BookImage[]
+  genres BookGenre[]
+}
+
+model Genre{
+  genre_id String @id @default(uuid())
+  genre_name String @unique
+
+  books BookGenre[]
+}
+
+model BookGenre{
+  book_id String
+  genre_id String
+
+  book Book @relation(fields:[book_id], references:[book_id])
+  genre Genre @relation(fields:[genre_id], references:[genre_id])
+
+  @@id([book_id, genre_id])
+}
+
+model BookImage{
+  image_id String @id @default(uuid())
+  image_url String?
+  book_id String
+  book Book @relation(fields:[book_id], references:[book_id])
+}
