@@ -42,7 +42,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="#"
+                href="/new"
                 className="flex items-center gap-1 relative text-[var(--primary-text)] transition-colors after:duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[var(--secondary-brand)] hover:after:-bottom-1 hover:after:w-full hover:text-[var(--secondary-brand)]"
               >
                 <Plus size={22} />

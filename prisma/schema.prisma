@@ -13,44 +13,54 @@ datasource db {
 }
 
 enum Reread {
-  Yes
-  No
-  Maybe
+  YES
+  NO
+  MAYBE
 }
 
 model Book{
-  book_id String @id @default(uuid())
-  book_title String
+  id String  @id @default(uuid()) @db.Uuid
+  title String
   author String?
   description String?
   review String?
-  reread Reread @default(No)
+  reread Reread @default(NO)
   createdAt DateTime @default(now())
 
+  typeId String @map("type_id") @db.Uuid
+  type Type @relation(fields:[typeId], references:[id], onDelete:Cascade)
   images BookImage[]
   genres BookGenre[]
 }
 
 model Genre{
-  genre_id String @id @default(uuid())
-  genre_name String @unique
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String @unique
 
   books BookGenre[]
 }
 
-model BookGenre{
-  book_id String
-  genre_id String
+model Type{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String @unique
 
-  book Book @relation(fields:[book_id], references:[book_id])
-  genre Genre @relation(fields:[genre_id], references:[genre_id])
-
-  @@id([book_id, genre_id])
+  books Book[]
 }
 
+model BookGenre{
+  bookId String @map("book_id") @db.Uuid
+  genreId String @map("genre_id") @db.Uuid
+
+  book Book @relation(fields:[bookId], references:[id], onDelete:Cascade)
+  genre Genre @relation(fields:[genreId], references:[id], onDelete:Cascade)
+
+  @@id([bookId, genreId])
+}
+
+
 model BookImage{
-  image_id String @id @default(uuid())
-  image_url String?
-  book_id String
-  book Book @relation(fields:[book_id], references:[book_id])
+  id String @id @default(uuid()) @db.Uuid
+  imageUrl String @map("image_url")
+  bookId String @map("book_id") @db.Uuid
+  book Book @relation(fields:[bookId], references:[id], onDelete:Cascade)
 }
