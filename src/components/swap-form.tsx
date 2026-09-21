@@ -121,6 +121,20 @@ export const SwapForm: FC<SwapFormProps> = ({
 
           {/* Email */}
           <div className="space-y-4 sm:space-y-8">
+            {!isSignIn ? (
+              <div>
+                <label className="block text-sm font-medium text-[#0B0B0B] dark:text-zinc-300 mb-1.5">
+                  User name
+                </label>
+                <input
+                  type="text"
+                  placeholder="test"
+                  className="w-full px-4 py-2.5 rounded-xl border-[1.2px] border-[#E7E7E7] dark:border-zinc-800 bg-white dark:bg-zinc-900 focus:ring-1 focus:ring-black dark:focus:ring-zinc-400 outline-none shadow-sm text-[15px] sm:text-base"
+                />
+              </div>
+            ) : (
+              <div></div>
+            )}
             <div>
               <label className="block text-sm font-medium text-[#0B0B0B] dark:text-zinc-300 mb-1.5">
                 Email
