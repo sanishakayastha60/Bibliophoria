@@ -11,6 +11,30 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Reread {
+  YES
+  NO
+  MAYBE
+}
+
+enum ItemType {
+  MANGA
+  MANHWA
+  MANHUA
+  WEBNOVEL
+  NOVEL
+  OTHER
+} 
+
+enum ItemStatus{
+  WANT_TO_READ
+  READING
+  COMPLETED
+  DROPPED
+  ON_HOLD
+}
+
 //Who are you in my app?
 model User{
   id String @id @default(cuid())
@@ -52,3 +76,21 @@ model Session{
   user User @relation(fields:[userId],references:[id],onDelete:Cascade)
 }
 
+//new item info
+
+model Item{
+  id String @id @default(cuid())
+  name String
+  altName String?
+  description String? @db.Text
+  author String?
+  chapters Int?
+  reread Reread @default(NO)
+  status ItemStatus @default(WANT_TO_READ)
+  imageUrl String?
+  genre String?
+  type ItemType?
+  personalReview String? @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
