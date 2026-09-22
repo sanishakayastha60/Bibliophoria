@@ -114,7 +114,6 @@ export const SwapForm: FC<SwapFormProps> = ({
           redirect: false,
           callbackUrl: "/dashboard",
         });
-        console.log("Credentials sign-in response", res);
         if (res?.error) {
           setServerError("Invalid email or password");
         } else {
