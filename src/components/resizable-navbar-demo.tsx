@@ -11,7 +11,9 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 import { useState } from "react";
+import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { redirect } from "next/dist/server/api-utils";
 
 export default function NavbarDemo() {
   const navItems = [
@@ -30,7 +32,6 @@ export default function NavbarDemo() {
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   return (
     <div className="relative w-full">
       <Navbar>
@@ -39,7 +40,10 @@ export default function NavbarDemo() {
           <NavbarLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            <NavbarButton variant="secondary">Add New</NavbarButton>
+            <Link href="/add">
+              {" "}
+              <NavbarButton variant="secondary">Add New</NavbarButton>
+            </Link>{" "}
             <NavbarButton
               variant="secondary"
               onClick={() => signOut({ callbackUrl: "/" })}
@@ -74,7 +78,9 @@ export default function NavbarDemo() {
               </a>
             ))}
             <div className="flex w-full flex-col gap-4">
-              <NavbarButton variant="secondary">Add New</NavbarButton>
+              <Link href="/add" className="w-full flex justify-center">
+                <NavbarButton variant="secondary">Add New</NavbarButton>
+              </Link>
               <NavbarButton
                 onClick={() => {
                   setIsMobileMenuOpen(false);
