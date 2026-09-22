@@ -5,6 +5,7 @@ import NavbarDemo from "@/components/resizable-navbar-demo";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
+  console.log("Dashboard session: ", session);
   if (!session) {
     redirect("/");
   }

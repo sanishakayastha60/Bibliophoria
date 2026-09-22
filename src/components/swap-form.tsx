@@ -97,7 +97,6 @@ export const SwapForm: FC<SwapFormProps> = ({
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-
     setErrors({});
     setServerError("");
 
@@ -113,8 +112,9 @@ export const SwapForm: FC<SwapFormProps> = ({
           email: formData.email,
           password: formData.password,
           redirect: false,
+          callbackUrl: "/dashboard",
         });
-
+        console.log("Credentials sign-in response", res);
         if (res?.error) {
           setServerError("Invalid email or password");
         } else {
@@ -272,6 +272,7 @@ export const SwapForm: FC<SwapFormProps> = ({
               whileTap={{ scale: 0.97 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               className="w-full py-3 sm:py-3.5 bg-[#030303] dark:bg-zinc-100 text-[#FAFAFA] dark:text-zinc-900 rounded-xl font-semibold shadow-lg text-[15px] sm:text-base"
+              disabled={isSubmitting}
             >
               {isSignIn ? mergedTexts.signInButton : mergedTexts.signUpButton}
             </motion.button>
