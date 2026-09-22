@@ -27,7 +27,7 @@ export default function NavbarDemo() {
     },
     {
       name: "All Books",
-      link: "#features",
+      link: "/all",
     },
   ];
 

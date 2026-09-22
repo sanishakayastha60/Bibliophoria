@@ -30,3 +30,12 @@ export async function CreateItem(formData: FormData) {
   });
   redirect("/dashboard");
 }
+
+export async function getAllItems() {
+  const items = await prisma.item.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return items;
+}
