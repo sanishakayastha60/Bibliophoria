@@ -1,5 +1,8 @@
 "use client";
-
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { registerSchema, type RegisterInput } from "@/lib/schema/auth";
+import { signIn } from "next-auth/react";
 import { type FC } from "react";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { FaGoogle } from "react-icons/fa";
@@ -32,7 +35,7 @@ const DEFAULT_TEXTS: SwapFormTexts = {
   signUpTitle: "Create Account",
   signInSubtitle: "Hey friend, welcome back!",
   signUpSubtitle: "Just one more step to get started!",
-  signInButton: "Get Sign In Code",
+  signInButton: "Sign In",
   signUpButton: "Create Account",
   footerSignIn: "Don't have account?",
   footerSignUp: "Already have account?",
@@ -47,6 +50,16 @@ export const SwapForm: FC<SwapFormProps> = ({
   onModeChange,
   texts = {},
 }) => {
+  const router = useRouter();
+
+  const [formData, setFormData] = useState<RegisterInput>({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const mergedTexts = { ...DEFAULT_TEXTS, ...texts };
 
   /* Animations */
@@ -70,6 +83,89 @@ export const SwapForm: FC<SwapFormProps> = ({
       filter: "blur(4px)",
     },
   };
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
+  }
+
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setErrors({});
+    setServerError("");
+
+    if (isSignIn) {
+      if (!formData.email || !formData.password) {
+        setServerError("Please enter both email and password.");
+        return;
+      }
+
+      try {
+        setIsSubmitting(true);
+        const res = await signIn("credentials", {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        });
+
+        if (res?.error) {
+          setServerError("Invalid email or password");
+        } else {
+          router.push("/dashboard");
+          router.refresh();
+        }
+      } catch {
+        setServerError("Something went wrong during sign in.");
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      const result = registerSchema.safeParse(formData);
+
+      if (!result.success) {
+        const fieldErrors: Partial<Record<keyof RegisterInput, string>> = {};
+        result.error.issues.forEach((issue) => {
+          const field = issue.path[0] as keyof RegisterInput;
+          if (!fieldErrors[field]) {
+            fieldErrors[field] = issue.message;
+          }
+        });
+        setErrors(fieldErrors);
+        return;
+      }
+
+      try {
+        setIsSubmitting(true);
+
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(result.data),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setServerError(data.error || "Registration failed");
+          return;
+        }
+        onModeChange(true);
+      } catch {
+        setServerError("Something went wrong. Please try again.");
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -96,7 +192,10 @@ export const SwapForm: FC<SwapFormProps> = ({
 
           {/* Social Buttons */}
           <div className="space-y-2.5 sm:space-y-3">
-            <button className="w-full flex shadow-sm items-center justify-center gap-2 sm:gap-3 py-3 px-4 border-[1.2px] border-[#E7E7E7] dark:border-zinc-800 rounded-xl font-medium text-[#131313] dark:text-zinc-200 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-[15px] sm:text-base">
+            <button
+              className="w-full flex shadow-sm items-center justify-center gap-2 sm:gap-3 py-3 px-4 border-[1.2px] border-[#E7E7E7] dark:border-zinc-800 rounded-xl font-medium text-[#131313] dark:text-zinc-200 bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors text-[15px] sm:text-base"
+              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            >
               <FaGoogle className="text-lg sm:text-xl" />
               Continue with Google
             </button>
@@ -118,9 +217,12 @@ export const SwapForm: FC<SwapFormProps> = ({
               </span>
             </div>
           </div>
+          {serverError && (
+            <div className="text-red-600 text-sm">{serverError}</div>
+          )}
 
           {/* Email */}
-          <div className="space-y-4 sm:space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-8">
             {!isSignIn ? (
               <div>
                 <label className="block text-sm font-medium text-[#0B0B0B] dark:text-zinc-300 mb-1.5">
@@ -129,6 +231,9 @@ export const SwapForm: FC<SwapFormProps> = ({
                 <input
                   type="text"
                   placeholder="test"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   className="w-full px-4 py-2.5 rounded-xl border-[1.2px] border-[#E7E7E7] dark:border-zinc-800 bg-white dark:bg-zinc-900 focus:ring-1 focus:ring-black dark:focus:ring-zinc-400 outline-none shadow-sm text-[15px] sm:text-base"
                 />
               </div>
@@ -142,6 +247,9 @@ export const SwapForm: FC<SwapFormProps> = ({
               <input
                 type="email"
                 placeholder="name@example.com"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="w-full px-4 py-2.5 rounded-xl border-[1.2px] border-[#E7E7E7] dark:border-zinc-800 bg-white dark:bg-zinc-900 focus:ring-1 focus:ring-black dark:focus:ring-zinc-400 outline-none shadow-sm text-[15px] sm:text-base"
               />
             </div>
@@ -152,6 +260,9 @@ export const SwapForm: FC<SwapFormProps> = ({
               </label>
               <input
                 type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 className="w-full px-4 py-2.5 rounded-xl border-[1.2px] border-[#E7E7E7] dark:border-zinc-800 bg-white dark:bg-zinc-900 focus:ring-1 focus:ring-black dark:focus:ring-zinc-400 outline-none shadow-sm text-[15px] sm:text-base"
               />
             </div>
@@ -164,7 +275,7 @@ export const SwapForm: FC<SwapFormProps> = ({
             >
               {isSignIn ? mergedTexts.signInButton : mergedTexts.signUpButton}
             </motion.button>
-          </div>
+          </form>
         </div>
 
         {/* Footer */}

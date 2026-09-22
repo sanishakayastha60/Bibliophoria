@@ -11,12 +11,43 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
+//Who are you in my app?
 model User{
   id String @id @default(cuid())
   name String?
   email String @unique
-  password String
+  password String?
+  image String?
+  emailVerified DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  accounts Account[]
+  sessions Session[]
+}
+
+//Which Google account is connected to you?
+
+model Account{
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields:[userId],references:[id], onDelete:Cascade)
+  type String
+  provider String
+  providerAccountId String
+  refresh_token String?
+  access_token String?
+  expires_at Int?
+  token_type String?
+  scope String?
+  id_token String?
+  session_state String?
+  @@unique([provider,providerAccountId])
+}
+
+//Are you currently logged in?
+model Session{
+  sessionToken String @unique
+  userId String
+  expires DateTime
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
 }

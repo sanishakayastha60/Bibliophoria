@@ -1,16 +1,27 @@
-"use client";
+import { authOptions } from "@/auth";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import NavbarDemo from "@/components/resizable-navbar-demo";
 
-import { useSession, signOut } from "next-auth/react";
-import redirect from "next/navigation";
-
-export default function DashboardPage() {
-  const { data: session, status } = useSession();
+export default async function DashboardPage() {
+  const session = await getServerSession(authOptions);
   if (!session) {
-    <p>Access Denied</p>;
+    redirect("/");
   }
   return (
     <div>
-      <h1>Welcome, {session?.user?.name}</h1>
+      <NavbarDemo />
+      <h1 className="text-2xl m-4">
+        Welcome,{" "}
+        <span className="text-green-700 underline">{session.user?.name}</span>
+      </h1>
+
+      {/* <button
+        onClick={() => signOut({ callbackUrl: "/" })}
+        className="p-2 border rounded-xl bg-black text-white"
+      >
+        Sign Out
+      </button> */}
     </div>
   );
 }
