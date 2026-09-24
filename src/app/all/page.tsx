@@ -1,5 +1,6 @@
-import { getAllItems } from "../actions/itemAction";
+import { getAllItems, deleteItem } from "../actions/itemAction";
 import Link from "next/link";
+import DeleteButton from "@/components/DeleteButton";
 export default async function AllLibraryPage() {
   const items = await getAllItems();
   return (
@@ -19,6 +20,7 @@ export default async function AllLibraryPage() {
               <Link href={`/edit/${item.id}`}>
                 <button className="p-2 bg-yellow-200 rounded-xl">Update</button>
               </Link>
+              <DeleteButton info={`${item.id}`} />
             </div>
           </div>
         ))}

@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { ItemStatus, ItemType, Reread } from "@/generated/prisma/enums";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 export async function CreateItem(formData: FormData) {
   const name = formData.get("name") as string;
   const altName = formData.get("altName") as string;
@@ -81,5 +82,15 @@ export async function updateItem(id: string, formData: FormData) {
       personalReview: review,
     },
   });
+  redirect("/all");
+}
+
+export async function deleteItem(id: string) {
+  await prisma.item.delete({
+    where: {
+      id,
+    },
+  });
+  revalidatePath("/all");
   redirect("/all");
 }
