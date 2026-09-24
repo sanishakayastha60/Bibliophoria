@@ -6,6 +6,7 @@ export async function CreateItem(formData: FormData) {
   const name = formData.get("name") as string;
   const altName = formData.get("altName") as string;
   const description = formData.get("description") as string;
+  const imageUrl = JSON.parse(formData.get("image") as string);
   const author = formData.get("author") as string;
   const chapter = Number(formData.get("chapter"));
   const status = formData.get("status") as ItemStatus;
@@ -19,6 +20,7 @@ export async function CreateItem(formData: FormData) {
       name,
       altName,
       description,
+      imageUrl,
       author,
       chapters: chapter,
       reread,

@@ -6,7 +6,8 @@ export default async function AllLibraryPage() {
       <h1>All items</h1>
       <div>
         {items.map((item) => (
-          <div className="border">
+          <div key={item.id} className="border">
+            {item.imageUrl && <img src={item.imageUrl} alt={item.name} />}
             <h2>{item.name}</h2>
             <i>
               {item?.altName}.{item?.author}
