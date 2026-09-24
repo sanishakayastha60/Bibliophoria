@@ -1,4 +1,5 @@
 import { getAllItems } from "../actions/itemAction";
+import Link from "next/link";
 export default async function AllLibraryPage() {
   const items = await getAllItems();
   return (
@@ -13,6 +14,12 @@ export default async function AllLibraryPage() {
               {item?.altName}.{item?.author}
             </i>
             <div>{item.description}</div>
+            <div>{item.personalReview}</div>
+            <div>
+              <Link href={`/edit/${item.id}`}>
+                <button className="p-2 bg-yellow-200 rounded-xl">Update</button>
+              </Link>
+            </div>
           </div>
         ))}
       </div>
